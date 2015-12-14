@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import javax.swing.JOptionPane;
@@ -50,8 +51,7 @@ import edu.umkc.audio.*;
 import edu.umkc.audio.MultiFeatureExtraction.AudioFeature;
 
 
-public class Client {
-
+public class ServerToReceiveAudioData {
 	public static String DataTrainingPath = "F:\\workspace\\AudioClassification\\data\\genres\\training\\";
 	public static String DataTestingPath = "F:\\workspace\\AudioClassification\\data\\genres\\testing\\";
 	
@@ -88,11 +88,49 @@ public class Client {
 
     public static void main(String[] args) throws Exception {
     	
-        String serverAddress = "localhost";
-        Socket s = new Socket(serverAddress, 9090);
+    	//ServerSocket listener = new ServerSocket(9090);
+        try {
+            while (true) {
+               
+            	 String serverAddress = "10.205.0.115";
+                 Socket socket = new Socket(serverAddress, 1234);
+                 InputStream is = socket.getInputStream();
+                 
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                System.out.println("Socket is waiting");
+                String name = br.readLine();
+                System.out.println("Socket received data file is:" +name);
+                String[] split = name.split(".");
+                
+                
+                
+                //Sending to spark
+                
+          /*      String serverAddress = "localhost";
+                Socket s = new Socket(serverAddress, 9090);
+                
+                PrintWriter out =
+                        new PrintWriter(s.getOutputStream(), true);
+                    OutputStream os = s.getOutputStream();
+                    
+                    out.println(genre);
+                    
+                    s.close();
+                    out.flush();
+                    out.close();*/
+                        
+            }
+        }
+        catch(Exception e)
+        {
+        	e.printStackTrace();
+        }
+        finally
+        {
+        	//listener.close();
+        }
         
-        InputStream is = s.getInputStream();
-        
+        /*
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         
         String length = br.readLine();
@@ -142,36 +180,12 @@ public class Client {
         classify(trainingInstances,new File("1.au"));
 
       
-        /*BufferedReader input =
-            new BufferedReader(new InputStreamReader(s.getInputStream()));
-        String length = input.readLine();
-        System.out.println("Received length of file:"+length);
         
-        File f = new File("1.au");
-        f.delete();
-       // PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("1.au", true)));
-        
-        long readLength=0;
-        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("1.au", true)));
-        while(readLength!=Long.parseLong(length))
-        {
-        	 String data = input.readLine();
-        	 System.out.println(data);
-        	 if(data!=null)
-        	 {
-        	 readLength+=data.length();  
-        	 out.print(data);
-        	 }
-        }
-       
-      
-       
-        out.close(); */
-        
-        System.exit(0);
+        */
+
     }
     
-    public static void classify(Instances train,File file) throws Exception {
+    public static String classify(Instances train,File file) throws Exception {
         FastVector atts = new FastVector();
         String[] classes = {"blues", "classical", "country", "disco", "hiphop", "jazz", "metal", "pop", "reggae", "rock"};
         double[] val;
@@ -232,13 +246,16 @@ public class Client {
             classifier.setClassifier(new NaiveBayes());
             classifier.buildClassifier(train);
 
+            double pred=0.0;
         //Classifying the test data with the train data
             for (int i = 0; i < test.numInstances(); i++) {
-                double pred = classifier.classifyInstance(test.instance(i));
+                 pred = classifier.classifyInstance(test.instance(i));
                 System.out.println("===== Classified instance =====");
                 System.out.println("Class predicted: " + test.classAttribute().value((int) pred));
               
             }
+            
+            return test.classAttribute().value((int) pred);
 
     }
     
@@ -426,3 +443,4 @@ public class Client {
 
 
 }
+

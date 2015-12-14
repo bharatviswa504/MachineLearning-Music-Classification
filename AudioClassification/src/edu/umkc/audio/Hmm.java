@@ -76,13 +76,14 @@ public class Hmm {
         try {
         	PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(DataTrainingPath+str+".seq", true)));
         	
-            for(int i=0;i<30;i+=3) 
+            for(int i=0;i<150;i+=1) 
             {
             	double a = samplesInfo[i]+1;
-            	double b = samplesInfo[i+1]+1;
-            	double c = samplesInfo[i+2]+1;
-            	out.print("[ " + a + " " +b +" " +c +" ] ;");
-            //	out.print("[ " a + " ] ");
+           // 	double b = samplesInfo[i+1]+1;
+           // 	double c = samplesInfo[i+2]+1;
+        //    	out.print("[ " + a + " " +b +" " +c +" ] ;");
+            //	out.print("[ " + a + " " +b +" ] ;");
+            	out.print("[ " +a + " ]; ");
             }
             
             out.print("\n");

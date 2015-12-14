@@ -73,6 +73,7 @@ public class MultiFeatureExtraction {
          atts.addElement(new Attribute("RMS"));
          atts.addElement(new Attribute("ConstantQ"));
          atts.addElement(new Attribute("MagnitudeFFT"));
+         atts.addElement(new Attribute("MFCC"));
     
          String[] classes = {"blues", "classical", "country", "disco", "hiphop", "jazz", "metal","pop","reggae","rock"};
        //  String[] classes = {"blues"};
@@ -107,7 +108,7 @@ public class MultiFeatureExtraction {
 
         try {
 
-             DataPrepare();
+        //     DataPrepare();
         	
             BufferedReader reader = new BufferedReader(new FileReader(DataTrainingPath+"test.arff"));
             Instances trainingInstances = new Instances(reader);
@@ -150,8 +151,10 @@ public class MultiFeatureExtraction {
             val[8] = f8[0];
             double[] f9 = feature(samples,AudioFeature.Method_of_Moments);
             val[9] = f9[0];
+            double[] f10 = feature(samples,AudioFeature.MFCC);
+            val[10] = f10[0];
             
-            System.out.println(f9[0]);
+            System.out.println(f10[0]);
             
             return val;
         }
@@ -177,12 +180,15 @@ public class MultiFeatureExtraction {
             val[8] = f8[0];
             double[] f9 = feature(samples,AudioFeature.Method_of_Moments);
             val[9] = f9[0];
+            double[] f10 = feature(samples,AudioFeature.MFCC);
+            val[10] = f10[10];
             
-            System.out.println(f9[0] +str);
+            
+            System.out.println(f10[0] +str);
             
             
             if (str != null)
-                val[10] = attValsRel.indexOf(str);
+                val[11] = attValsRel.indexOf(str);
             return val;
         }
 
@@ -345,11 +351,11 @@ public class MultiFeatureExtraction {
 
     public static void wekaAlgorithms(Instances data) throws Exception {
          classifier = new FilteredClassifier();         // new instance of tree
-      // classifier.setClassifier(new NaiveBayes());
+       classifier.setClassifier(new NaiveBayes());
       //  classifier.setClassifier(new J48());
          //classifier.setClassifier(new RandomForest());
          
-         	classifier.setClassifier(new ZeroR());
+         //	classifier.setClassifier(new ZeroR());
      //   classifier.setClassifier(new NaiveBayes());
         // classifier.setClassifier(new IBk());
         data.setClassIndex(data.numAttributes() - 1);
@@ -375,7 +381,7 @@ public class MultiFeatureExtraction {
 
     public static void classify(Instances train,File file) throws Exception {
         FastVector atts = new FastVector();
-        String[] classes = {"blues", "classical", "country", "disco", "hiphop", "jazz"};
+        String[] classes = {"blues", "classical", "country", "disco", "hiphop", "jazz", "metal","pop","reggae","rock"};
         double[] val;
         FastVector attValsRel = new FastVector();
 
@@ -400,7 +406,8 @@ public class MultiFeatureExtraction {
             atts.addElement(attributeConstantQ);
             Attribute attributeMFT = new Attribute("MagnitudeFFT");
             atts.addElement(attributeMFT);
-            
+            Attribute attributeMFCC = new Attribute("MFCC");
+            atts.addElement(attributeMFCC);
             
             for (int i = 0; i < classes.length; i++)
                 attValsRel.addElement(classes[i]);
@@ -420,6 +427,7 @@ public class MultiFeatureExtraction {
             instance.setValue(attributeRMS, val[7]);
             instance.setValue(attributeConstantQ, val[8]);
             instance.setValue(attributeMFT, val[9]);
+            instance.setValue(attributeMFCC, val[10]);
             
             test.add(instance);
         //Setting the class attribute

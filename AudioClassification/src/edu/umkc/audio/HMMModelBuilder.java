@@ -29,14 +29,14 @@ public class HMMModelBuilder {
 
 	public static void buildModel() throws Exception
 	{
-		int x=4;
+		int x=10;
 		//Blues Hmm Model
 		OpdfMultiGaussianFactory initBlues = new OpdfMultiGaussianFactory(
-				3);
+				1);
 
 		Reader learnReaderBlues = new FileReader("data\\genres\\training\\blues.seq");
 		List<List<ObservationVector>> learnSequencesBlues = ObservationSequencesReader
-				.readSequences(new ObservationVectorReader(),
+				.readSequences(new ObservationVectorReader(1),
 						learnReaderBlues);
 		learnReaderBlues.close();
 
@@ -55,11 +55,11 @@ public class HMMModelBuilder {
 		
 		//Classical Hmm Model
 		OpdfMultiGaussianFactory initClassical= new OpdfMultiGaussianFactory(
-				3);
+				1);
 
 		Reader learnReaderClassical = new FileReader("data\\genres\\training\\classical.seq");
 		List<List<ObservationVector>> learnSequencesClassical = ObservationSequencesReader
-				.readSequences(new ObservationVectorReader(),
+				.readSequences(new ObservationVectorReader(1),
 						learnReaderClassical);
 		learnReaderClassical.close();
 
@@ -78,10 +78,10 @@ public class HMMModelBuilder {
 		 
 		 //Country Hmm Model
 		 OpdfMultiGaussianFactory initCountry = new OpdfMultiGaussianFactory(
-					3);
+					1);
 		 Reader learnReaderCountry = new FileReader("data\\genres\\training\\country.seq");
 			List<List<ObservationVector>> learnSequencesCountry = ObservationSequencesReader
-					.readSequences(new ObservationVectorReader(),
+					.readSequences(new ObservationVectorReader(1),
 							learnReaderCountry);
 			learnReaderCountry.close();
 
@@ -100,10 +100,10 @@ public class HMMModelBuilder {
 			 
 			 //Disco Hmm Model
 			 OpdfMultiGaussianFactory initDisco = new OpdfMultiGaussianFactory(
-						3);
+						1);
 			 Reader learnReaderDisco = new FileReader("data\\genres\\training\\disco.seq");
 				List<List<ObservationVector>> learnSequencesDisco = ObservationSequencesReader
-						.readSequences(new ObservationVectorReader(),
+						.readSequences(new ObservationVectorReader(1),
 								learnReaderDisco);
 				learnReaderDisco.close();
 
@@ -122,10 +122,10 @@ public class HMMModelBuilder {
 				 
 				 //Disco Hmm Model
 				 OpdfMultiGaussianFactory initHipHop = new OpdfMultiGaussianFactory(
-							3);
+							1);
 				 Reader learnReaderHipHop = new FileReader("data\\genres\\training\\hiphop.seq");
 					List<List<ObservationVector>> learnSequencesHipHop = ObservationSequencesReader
-							.readSequences(new ObservationVectorReader(),
+							.readSequences(new ObservationVectorReader(1),
 									learnReaderHipHop);
 					learnReaderHipHop.close();
 
@@ -141,6 +141,8 @@ public class HMMModelBuilder {
 					BaumWelchLearner baumWelchLearnerHipHop = new BaumWelchLearner();
 					 learntHmmHipHop = baumWelchLearnerHipHop.learn(initHmmHipHop,
 							learnSequencesHipHop);
+					 
+					 
 
 
 		
@@ -153,18 +155,20 @@ public class HMMModelBuilder {
 		  File testFile = new File("data\\genres\\test.seq");
           testFile.delete();
           
-		 File file = new File(DataTestingPath+"classical\\classical.00009.au");
+		 File file = new File(DataTestingPath+"country\\country.00019.au");
 		AudioSamples samples = new AudioSamples(file, file.getPath(), false);
 	        double[] samplesInfo = samples.getSamplesMixedDown();
 	        try {
 	        	PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("data\\genres\\test.seq", true)));
 	        	
-	            for(int i=0;i<30;i+=3) 
+	            for(int i=0;i<150;i+=1) 
 	            {
 	            	double a = samplesInfo[i]+1;
-	            	double b = samplesInfo[i+1]+1;
-	            	double c = samplesInfo[i+2]+1;
-	            	out.print("[ " + a + " " +b +" " +c +" ] ;");
+	            //	double b = samplesInfo[i+1]+1;
+	            //	double c = samplesInfo[i+2]+1;
+	            	out.print("[ " +a + " ]; ");
+	            
+	            //	out.print("[ " + a + " " +b +" " +c +" ] ;");
 	            }
 	            
 	            out.print("\n");
@@ -202,7 +206,7 @@ public class HMMModelBuilder {
 	    		else if(classicalProb >bluesProb &&  classicalProb >countryProb && classicalProb > hiphopProb  && classicalProb >discoProb)
 	    			System.out.println("Classical");
 	    		else if(countryProb >bluesProb &&  countryProb >classicalProb && countryProb > hiphopProb &&  countryProb >discoProb)
-	    			System.out.println("Classical");
+	    			System.out.println("country");
 	    		else if(discoProb >bluesProb &&  discoProb >classicalProb && discoProb > hiphopProb &&  discoProb >countryProb)
 	    			System.out.println("Disco");
 	    		else if(hiphopProb >bluesProb &&  hiphopProb >classicalProb && hiphopProb > discoProb &&  hiphopProb >countryProb)

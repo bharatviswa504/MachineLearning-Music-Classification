@@ -73,9 +73,10 @@ public class MLEfficiency {
          atts.addElement(new Attribute("RMS"));
          atts.addElement(new Attribute("ConstantQ"));
          atts.addElement(new Attribute("MagnitudeFFT"));
+         atts.addElement(new Attribute("MFCC"));
     
-         String[] classes = {"blues", "classical", "country", "disco", "hiphop", "jazz", "metal","pop","reggae","rock"};
-       //  String[] classes = {"blues"};
+        // String[] classes = {"blues", "classical", "country", "disco", "hiphop", "jazz", "metal","pop","reggae","rock"};
+         String[] classes = {"classical","pop","rock","hiphop"};
 
          double[] val;
          FastVector attValsRel = new FastVector();
@@ -97,7 +98,7 @@ public class MLEfficiency {
 
          System.out.println(instances);
          
-         BufferedWriter writer = new BufferedWriter(new FileWriter(DataTrainingPath +"test.arff"));
+         BufferedWriter writer = new BufferedWriter(new FileWriter(DataTrainingPath +"4test.arff"));
          writer.write(instances.toString());
          writer.flush();
          writer.close();
@@ -107,9 +108,9 @@ public class MLEfficiency {
 
         try {
 
-         //    DataPrepare();
+       //     DataPrepare();
         	
-            BufferedReader reader = new BufferedReader(new FileReader(DataTrainingPath+"test.arff"));
+            BufferedReader reader = new BufferedReader(new FileReader(DataTrainingPath+"5test.arff"));
             Instances trainingInstances = new Instances(reader);
             reader.close();
           
@@ -151,7 +152,10 @@ public class MLEfficiency {
             double[] f9 = feature(samples,AudioFeature.Method_of_Moments);
             val[9] = f9[0];
             
-            System.out.println(f9[0]);
+            double[] f10=feature(samples,AudioFeature.MFCC);
+            val[10] = f10[0];
+            
+            System.out.println(f10[0]);
             
             return val;
         }
@@ -177,12 +181,16 @@ public class MLEfficiency {
             val[8] = f8[0];
             double[] f9 = feature(samples,AudioFeature.Method_of_Moments);
             val[9] = f9[0];
+            double[] f10=feature(samples,AudioFeature.MFCC);
+            val[10] = f10[0];
             
-            System.out.println(f9[0] +str);
+           
+            
+            System.out.println(f10[0] +str);
             
             
             if (str != null)
-                val[10] = attValsRel.indexOf(str);
+                val[11] = attValsRel.indexOf(str);
             return val;
         }
 
@@ -280,7 +288,7 @@ public class MLEfficiency {
                 
                 featureExt = new BeatHistogramLabels();
                 /*String [] dependecies2 = featureExt.getDepenedencies();
-                for(int k=0;k<dependecies2.length;k++)
+                for(int k=0;k<de	pendecies2.length;k++)
                 	System.out.println(dependecies2[k]);*/
                 double[][] beatHistogramFeat = new double[1][];
                 beatHistogramFeat[0] = otherFeature[1];
@@ -345,13 +353,13 @@ public class MLEfficiency {
 
     public static void wekaAlgorithms(Instances data) throws Exception {
          classifier = new FilteredClassifier();         // new instance of tree
-     // classifier.setClassifier(new NaiveBayes());
+      classifier.setClassifier(new NaiveBayes());
     //  classifier.setClassifier(new J48());
         // classifier.setClassifier(new RandomForest());
          
         //	classifier.setClassifier(new ZeroR());
-     //   classifier.setClassifier(new NaiveBayes());
-        classifier.setClassifier(new IBk());
+     //  classifier.setClassifier(new NaiveBayes());
+   //     classifier.setClassifier(new IBk());
          
         data.setClassIndex(data.numAttributes() - 1);
         Evaluation eval = new Evaluation(data);
@@ -376,7 +384,7 @@ public class MLEfficiency {
 
     public static void classify(Instances train,File file) throws Exception {
         FastVector atts = new FastVector();
-        String[] classes = { "classical", "hiphop", "pop"};
+        String[] classes = { "classical", "hiphop", "pop", "rock"};
         double[] val;
         FastVector attValsRel = new FastVector();
 
@@ -401,6 +409,9 @@ public class MLEfficiency {
             atts.addElement(attributeConstantQ);
             Attribute attributeMFT = new Attribute("MagnitudeFFT");
             atts.addElement(attributeMFT);
+            Attribute attributeMFCC = new Attribute("MFCC");
+            atts.addElement(attributeMFCC);
+            
             
             
             for (int i = 0; i < classes.length; i++)
@@ -421,7 +432,7 @@ public class MLEfficiency {
             instance.setValue(attributeRMS, val[7]);
             instance.setValue(attributeConstantQ, val[8]);
             instance.setValue(attributeMFT, val[9]);
-            
+            instance.setValue(attributeMFCC, val[10]);
             test.add(instance);
         //Setting the class attribute
             test.setClassIndex(test.numAttributes() - 1);

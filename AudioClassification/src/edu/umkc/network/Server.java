@@ -32,7 +32,7 @@ public class Server {
                         new PrintWriter(socket.getOutputStream(), true);
                     OutputStream os = socket.getOutputStream();
                    
-                    File file = new File("data\\genres\\testing\\pop\\pop.00009.au");
+                    File file = new File("data\\genres\\testing\\classical\\classical.00009.au");
                     
                     byte[] data = new byte[(int) file.length()];
                     System.out.println(data.length);
